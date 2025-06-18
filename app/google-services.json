@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "374262674840",
+    "project_id": "playcoachtactics",
+    "storage_bucket": "playcoachtactics.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374262674840:android:ae5e5e8beafda29e2827ed",
+        "android_client_info": {
+          "package_name": "com.example.playcoachtactics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO4hy3SmtfUyLiAh6Q9SQA52e0YusQixo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
