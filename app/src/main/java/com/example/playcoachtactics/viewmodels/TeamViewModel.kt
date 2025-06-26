@@ -46,7 +46,7 @@ class TeamViewModel @Inject constructor(
 
     fun getInitialFormationRelativeOffsets(): List<Pair<Int, RelativeOffset>> {
         val isFutbol8 = teamName.lowercase() in listOf("alevin", "benjamin")
-        val formationName = if (isFutbol8) "1-3-3-1" else "1-3-4-3"
+        val formationName = if (isFutbol8) "1-3-3-1" else "1-4-3-3"
 
         val portero = players.firstOrNull { it.position.equals("Portero", ignoreCase = true) }
         val restantes = players

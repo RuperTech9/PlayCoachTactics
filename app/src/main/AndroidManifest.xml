@@ -19,7 +19,7 @@
             android:exported="true"
             android:theme="@style/Theme.PlayCoachTactics"
             tools:ignore="ExtraText">
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             tools:ignore="ExtraText">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

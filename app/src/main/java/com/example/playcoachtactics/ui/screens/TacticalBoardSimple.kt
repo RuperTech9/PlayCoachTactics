@@ -110,12 +110,12 @@ fun TacticalBoardSimple(
                 BoxWithConstraints(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(5f / 8f)
+                        .aspectRatio(16f / 9f)
                         .background(Color(0xFF699BB2))
                 ) {
                     val fieldSize = remember { mutableStateOf(IntSize.Zero) }
-                    val playerSize = maxWidth * 0.12f
-                    val ballSize = playerSize * 0.35f
+                    val playerSize = maxWidth * 0.06f
+                    val ballSize = playerSize * 0.25f
 
                     val density = LocalDensity.current
                     val widthDp = with(density) { fieldSize.value.width.toDp() }
@@ -186,12 +186,9 @@ fun TacticalBoardSimple(
                     }
                 }
             }
-
-
-
             item {
                 BoxWithConstraints {
-                    val playerSize = maxWidth * 0.12f
+                    val playerSize = maxWidth * 0.058f
 
                     Row(
                         modifier = Modifier
@@ -216,6 +213,7 @@ fun TacticalBoardSimple(
                     }
                 }
             }
+
         }
 
         if (showSaveDialog) {
