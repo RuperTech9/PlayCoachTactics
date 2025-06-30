@@ -32,8 +32,6 @@ class TacticalBoardViewModel @Inject constructor(
 
     private val recordedFrames = mutableListOf<List<Pair<Int, RelativeOffset>>>()
 
-
-
     private var selectedPlayerId: Int? = null
 
     fun updatePositions(newPositions: List<Pair<Int, RelativeOffset>>) {

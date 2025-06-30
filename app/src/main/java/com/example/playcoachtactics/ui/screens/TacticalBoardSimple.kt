@@ -125,7 +125,6 @@ fun TacticalBoardSimple(
                         Text("▶ Reproducir", color = Color.White)
                     }
                 }
-
             }
 
             item {
@@ -208,6 +207,7 @@ fun TacticalBoardSimple(
                     }
                 }
             }
+
             item {
                 BoxWithConstraints {
                     val playerSize = maxWidth * 0.058f
@@ -398,6 +398,5 @@ fun TacticalBoardSimple(
                 tonalElevation = 6.dp
             )
         }
-
     }
 }
