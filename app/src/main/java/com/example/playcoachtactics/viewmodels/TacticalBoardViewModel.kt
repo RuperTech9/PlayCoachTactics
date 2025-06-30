@@ -1,7 +1,6 @@
 package com.example.playcoachtactics.viewmodels
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +24,7 @@ class TacticalBoardViewModel @Inject constructor(
     var playerPositions = mutableStateListOf<Pair<Int, RelativeOffset>>()
         private set
 
-    var targetPositions = mutableStateMapOf<Int, RelativeOffset>()
+    var formationState = mutableStateOf<UiState<List<Triple<String, List<Pair<Int, RelativeOffset>>, String>>>>(UiState.Loading)
         private set
 
     var isRecording = mutableStateOf(false)
@@ -33,8 +32,7 @@ class TacticalBoardViewModel @Inject constructor(
 
     private val recordedFrames = mutableListOf<List<Pair<Int, RelativeOffset>>>()
 
-    var formationState = mutableStateOf<UiState<List<Triple<String, List<Pair<Int, RelativeOffset>>, String>>>>(UiState.Loading)
-        private set
+
 
     private var selectedPlayerId: Int? = null
 
@@ -127,16 +125,6 @@ class TacticalBoardViewModel @Inject constructor(
         }
     }
 
-    fun setDemoTargetPositions() {
-        targetPositions.clear()
-        playerPositions.forEach { (number, current) ->
-            targetPositions[number] = RelativeOffset(
-                xPercent = (current.xPercent + 10f).coerceAtMost(100f),
-                yPercent = (current.yPercent + 5f).coerceAtMost(100f)
-            )
-        }
-    }
-
     fun startRecording() {
         isRecording.value = true
         recordedFrames.clear()
@@ -155,9 +143,5 @@ class TacticalBoardViewModel @Inject constructor(
                 kotlinx.coroutines.delay(delayPerFrame)
             }
         }
-    }
-
-    fun clearSelection() {
-        selectedPlayerId = null
     }
 }
