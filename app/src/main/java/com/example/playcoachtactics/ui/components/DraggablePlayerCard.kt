@@ -1,5 +1,7 @@
 package com.example.playcoachtactics.ui.components
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -12,11 +14,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import com.example.playcoachtactics.data.models.PlayerInfo
 import com.example.playcoachtactics.data.models.RelativeOffset
-import com.example.playcoachtactics.ui.components.PlayerCard
+import kotlinx.coroutines.launch
 
 @Composable
 fun DraggablePlayerCard(
@@ -31,35 +33,40 @@ fun DraggablePlayerCard(
     onClick: () -> Unit
 ) {
     val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
 
-    var offset by remember(widthDp, heightDp, relOffset) {
-        mutableStateOf(
-            DpOffset(
-                x = (relOffset.xPercent / 100f) * widthDp,
-                y = (relOffset.yPercent / 100f) * heightDp
-            )
-        )
+    // Convert widthDp and heightDp to px for calculations
+    val widthPx = with(density) { widthDp.toPx() }
+    val heightPx = with(density) { heightDp.toPx() }
+
+    val animX = remember { Animatable(0f) }
+    val animY = remember { Animatable(0f) }
+
+    // Snap to initial position at first composition and when relOffset changes
+    LaunchedEffect(widthPx, heightPx, relOffset) {
+        animX.snapTo((relOffset.xPercent / 100f) * widthPx)
+        animY.snapTo((relOffset.yPercent / 100f) * heightPx)
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .offset(offset.x, offset.y)
+            .offset { IntOffset(animX.value.toInt(), animY.value.toInt()) }
             .background(if (isSelected) Color.LightGray else Color.Transparent)
             .pointerInput(number) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
-                    val dxDp = with(density) { dragAmount.x.toDp() }
-                    val dyDp = with(density) { dragAmount.y.toDp() }
+                    val newX = (animX.value + dragAmount.x).coerceIn(0f, widthPx - with(density) { playerSize.toPx() })
+                    val newY = (animY.value + dragAmount.y).coerceIn(0f, heightPx - with(density) { playerSize.toPx() })
 
-                    val newX = (offset.x + dxDp).coerceIn(0.dp, widthDp - playerSize)
-                    val newY = (offset.y + dyDp).coerceIn(0.dp, heightDp - playerSize)
-
-                    offset = DpOffset(newX, newY)
+                    scope.launch {
+                        animX.snapTo(newX)
+                        animY.snapTo(newY)
+                    }
 
                     val newRelativeOffset = RelativeOffset(
-                        xPercent = (newX / widthDp) * 100f,
-                        yPercent = (newY / heightDp) * 100f
+                        xPercent = newX / widthPx * 100f,
+                        yPercent = newY / heightPx * 100f
                     )
 
                     onOffsetChange(newRelativeOffset)

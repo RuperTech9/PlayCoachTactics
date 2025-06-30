@@ -1,6 +1,7 @@
 package com.example.playcoachtactics.viewmodels
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +24,14 @@ class TacticalBoardViewModel @Inject constructor(
 
     var playerPositions = mutableStateListOf<Pair<Int, RelativeOffset>>()
         private set
+
+    var targetPositions = mutableStateMapOf<Int, RelativeOffset>()
+        private set
+
+    var isRecording = mutableStateOf(false)
+        private set
+
+    private val recordedFrames = mutableListOf<List<Pair<Int, RelativeOffset>>>()
 
     var formationState = mutableStateOf<UiState<List<Triple<String, List<Pair<Int, RelativeOffset>>, String>>>>(UiState.Loading)
         private set
@@ -51,6 +60,11 @@ class TacticalBoardViewModel @Inject constructor(
         val index = playerPositions.indexOfFirst { it.first == number }
         if (index != -1) {
             playerPositions[index] = number to newOffset
+
+            // Registrar frame si estamos grabando
+            if (isRecording.value) {
+                recordedFrames.add(playerPositions.map { it.copy() })
+            }
         }
     }
 
@@ -110,6 +124,36 @@ class TacticalBoardViewModel @Inject constructor(
             formationRepository.deleteFormation(documentId)
             val current = (formationState.value as? UiState.Success)?.data ?: return@launch
             formationState.value = UiState.Success(current.filterNot { it.third == documentId })
+        }
+    }
+
+    fun setDemoTargetPositions() {
+        targetPositions.clear()
+        playerPositions.forEach { (number, current) ->
+            targetPositions[number] = RelativeOffset(
+                xPercent = (current.xPercent + 10f).coerceAtMost(100f),
+                yPercent = (current.yPercent + 5f).coerceAtMost(100f)
+            )
+        }
+    }
+
+    fun startRecording() {
+        isRecording.value = true
+        recordedFrames.clear()
+        recordedFrames.add(playerPositions.map { it.copy() }) // primer frame
+    }
+
+    fun stopRecording() {
+        isRecording.value = false
+    }
+
+    fun playRecordedAnimation() {
+        viewModelScope.launch {
+            val delayPerFrame = 33L
+            for (frame in recordedFrames) {
+                updatePositions(frame)
+                kotlinx.coroutines.delay(delayPerFrame)
+            }
         }
     }
 

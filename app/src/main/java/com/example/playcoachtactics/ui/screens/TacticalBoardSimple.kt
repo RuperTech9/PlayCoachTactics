@@ -77,14 +77,14 @@ fun TacticalBoardSimple(
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    val isRecording = viewModel.isRecording.value
+
                     Button(
                         onClick = {
                             editableFormationName = ""
                             showSaveDialog = true
                         },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
+                        modifier = Modifier.weight(1f).height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF004AAD))
                     ) {
                         Icon(Icons.Default.Save, contentDescription = "Guardar")
@@ -94,16 +94,38 @@ fun TacticalBoardSimple(
 
                     Button(
                         onClick = { showLoadDialog = true },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
+                        modifier = Modifier.weight(1f).height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF004AAD))
                     ) {
                         Icon(Icons.Default.Download, contentDescription = "Cargar")
                         Spacer(Modifier.width(8.dp))
                         Text("Cargar", color = Color.White)
                     }
+
+                    Button(
+                        onClick = {
+                            if (isRecording) viewModel.stopRecording()
+                            else viewModel.startRecording()
+                        },
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isRecording) Color(0xFFB71C1C) else Color(0xFFFFA000)
+                        )
+                    ) {
+                        Text(if (isRecording) "⏸ Pausar" else "🔴 Grabar", color = Color.White)
+                    }
+
+                    Button(
+                        onClick = {
+                            viewModel.playRecordedAnimation()
+                        },
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)) // verde
+                    ) {
+                        Text("▶ Reproducir", color = Color.White)
+                    }
                 }
+
             }
 
             item {
